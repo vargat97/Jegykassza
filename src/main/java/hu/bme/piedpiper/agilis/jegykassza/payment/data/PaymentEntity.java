@@ -19,7 +19,7 @@ import java.util.UUID;
 public class PaymentEntity {
 
     @Id
-    private UUID id;
+    private UUID id = UUID.randomUUID();
 
     @Column
     private UUID productId;

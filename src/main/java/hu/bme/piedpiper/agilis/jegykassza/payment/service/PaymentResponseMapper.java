@@ -26,8 +26,8 @@ public class PaymentResponseMapper {
         List<PaymentResponse> collect = page.getContent().stream().map(c -> {
             PaymentResponse response = new PaymentResponse();
             response.setProductId(c.getProductId());
-            response.setPaymentStatus(response.getPaymentStatus());
-            response.setPaymentId(response.getPaymentId());
+            response.setPaymentStatus(c.getPaymentStatus());
+            response.setPaymentId(c.getId());
             return response;
         }).collect(Collectors.toList());
         return new PageImpl<>(collect, page.getPageable(), page.getTotalElements());

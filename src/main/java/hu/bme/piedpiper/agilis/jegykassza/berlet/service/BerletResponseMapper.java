@@ -20,6 +20,7 @@ public class BerletResponseMapper {
         berletResponse.setErvenyessegVege(entity.getErvenyessegVege());
         berletResponse.setTulajdonos(new UserResponse(entity.getTulajdonos().getId(), entity.getTulajdonos().getUsername()));
         berletResponse.setErvenyessegZona(entity.getErvenyessegZona());
+        berletResponse.setId(entity.getId());
         return berletResponse;
     }
 

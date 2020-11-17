@@ -14,13 +14,14 @@ import java.util.Map;
 @Slf4j
 public class JegyResponseMapper {
     public JegyResponse map(JegyEntity entity) {
-        JegyResponse berletResponse = new JegyResponse();
-        berletResponse.setAr(entity.getAr());
-        berletResponse.setErvenyessegKezdete(entity.getErvenyessegKezdete());
-        berletResponse.setUsed(entity.isUsed());
-        berletResponse.setTulajdonos(new UserResponse(entity.getTulajdonos().getId(), entity.getTulajdonos().getUsername()));
-        berletResponse.setErvenyessegZona(entity.getErvenyessegZona());
-        return berletResponse;
+        JegyResponse jegyResponse = new JegyResponse();
+        jegyResponse.setAr(entity.getAr());
+        jegyResponse.setErvenyessegKezdete(entity.getErvenyessegKezdete());
+        jegyResponse.setUsed(entity.isUsed());
+        jegyResponse.setTulajdonos(new UserResponse(entity.getTulajdonos().getId(), entity.getTulajdonos().getUsername()));
+        jegyResponse.setErvenyessegZona(entity.getErvenyessegZona());
+        jegyResponse.setId(entity.getId());
+        return jegyResponse;
     }
 
     public AvailableJegy mapJegyList(Map<ErvenyessegZona, Integer> allJegy) {
