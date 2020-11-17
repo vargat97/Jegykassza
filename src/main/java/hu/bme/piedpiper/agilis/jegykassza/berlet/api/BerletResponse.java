@@ -1,7 +1,6 @@
 package hu.bme.piedpiper.agilis.jegykassza.berlet.api;
 
 import hu.bme.piedpiper.agilis.jegykassza.user.api.UserResponse;
-import hu.bme.piedpiper.agilis.jegykassza.user.data.UserEntity;
 import hu.bme.piedpiper.agilis.jegykassza.util.ErvenyessegZona;
 import lombok.Data;
 

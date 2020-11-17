@@ -2,7 +2,7 @@ package hu.bme.piedpiper.agilis.jegykassza.berlet.service;
 
 import hu.bme.piedpiper.agilis.jegykassza.berlet.api.BerletVasarlasRequest;
 import hu.bme.piedpiper.agilis.jegykassza.berlet.data.BerletEntity;
-import hu.bme.piedpiper.agilis.jegykassza.berlet.data.BerletRepository;
+import hu.bme.piedpiper.agilis.jegykassza.berlet.data.BerletEntityRepository;
 import hu.bme.piedpiper.agilis.jegykassza.user.data.UserEntity;
 import hu.bme.piedpiper.agilis.jegykassza.user.service.UserService;
 import hu.bme.piedpiper.agilis.jegykassza.util.ErvenyessegZona;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class BerletService {
 
-    private final BerletRepository berletRepository;
+    private final BerletEntityRepository berletRepository;
 
     private final UserService userService;
 

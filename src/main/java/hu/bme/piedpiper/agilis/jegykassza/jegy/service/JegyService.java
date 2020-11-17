@@ -2,7 +2,7 @@ package hu.bme.piedpiper.agilis.jegykassza.jegy.service;
 
 import hu.bme.piedpiper.agilis.jegykassza.jegy.api.JegyVasarlasRequest;
 import hu.bme.piedpiper.agilis.jegykassza.jegy.data.JegyEntity;
-import hu.bme.piedpiper.agilis.jegykassza.jegy.data.JegyRepository;
+import hu.bme.piedpiper.agilis.jegykassza.jegy.data.JegyEntityRepository;
 import hu.bme.piedpiper.agilis.jegykassza.user.data.UserEntity;
 import hu.bme.piedpiper.agilis.jegykassza.user.service.UserService;
 import hu.bme.piedpiper.agilis.jegykassza.util.ErvenyessegZona;
@@ -23,7 +23,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class JegyService {
 
-    private final JegyRepository jegyRepository;
+    private final JegyEntityRepository jegyRepository;
 
     private final UserService userService;
 

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface JegyRepository extends JpaRepository<JegyEntity, UUID> {
+public interface JegyEntityRepository extends JpaRepository<JegyEntity, UUID> {
 }
