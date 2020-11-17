@@ -7,6 +7,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface UserRepository extends JpaRepository<UserEntity, UUID> {
+public interface UserEntityRepository extends JpaRepository<UserEntity, UUID> {
     Optional<UserEntity> findByIdAndPassword(UUID id, String password);
 }

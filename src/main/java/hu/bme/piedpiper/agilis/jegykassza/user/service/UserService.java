@@ -2,7 +2,7 @@ package hu.bme.piedpiper.agilis.jegykassza.user.service;
 
 import hu.bme.piedpiper.agilis.jegykassza.user.api.UserCreateRequest;
 import hu.bme.piedpiper.agilis.jegykassza.user.data.UserEntity;
-import hu.bme.piedpiper.agilis.jegykassza.user.data.UserRepository;
+import hu.bme.piedpiper.agilis.jegykassza.user.data.UserEntityRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @AllArgsConstructor
 public class UserService {
 
-    private final UserRepository userRepository;
+    private final UserEntityRepository userRepository;
 
     public UserEntity registerUser(UserCreateRequest userCreateRequest) {
         UserEntity entity = new UserEntity();
