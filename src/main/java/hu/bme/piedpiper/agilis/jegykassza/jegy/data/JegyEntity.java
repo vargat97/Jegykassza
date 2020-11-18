@@ -2,7 +2,6 @@ package hu.bme.piedpiper.agilis.jegykassza.jegy.data;
 
 import hu.bme.piedpiper.agilis.jegykassza.util.AbstractProduct;
 import hu.bme.piedpiper.agilis.jegykassza.util.ErvenyessegZona;
-import hu.bme.piedpiper.agilis.jegykassza.util.PaymentStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,8 +27,5 @@ public class JegyEntity extends AbstractProduct {
 
     @Column
     private int ar = 1000;
-
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
 
 }

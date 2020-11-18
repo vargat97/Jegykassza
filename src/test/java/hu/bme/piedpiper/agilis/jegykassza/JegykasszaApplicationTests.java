@@ -1,15 +1,22 @@
 package hu.bme.piedpiper.agilis.jegykassza;
 
+import hu.bme.piedpiper.agilis.jegykassza.berlet.api.BerletVasarlasRequest;
+import hu.bme.piedpiper.agilis.jegykassza.berlet.data.BerletEntity;
 import hu.bme.piedpiper.agilis.jegykassza.berlet.data.BerletEntityRepository;
 import hu.bme.piedpiper.agilis.jegykassza.berlet.service.BerletService;
+import hu.bme.piedpiper.agilis.jegykassza.jegy.api.JegyVasarlasRequest;
+import hu.bme.piedpiper.agilis.jegykassza.jegy.data.JegyEntity;
 import hu.bme.piedpiper.agilis.jegykassza.jegy.data.JegyEntityRepository;
 import hu.bme.piedpiper.agilis.jegykassza.jegy.service.JegyService;
+import hu.bme.piedpiper.agilis.jegykassza.payment.api.CreditCardPaymentRequest;
 import hu.bme.piedpiper.agilis.jegykassza.payment.data.PaymentEntityRepository;
 import hu.bme.piedpiper.agilis.jegykassza.payment.service.PaymentService;
 import hu.bme.piedpiper.agilis.jegykassza.user.api.UserCreateRequest;
 import hu.bme.piedpiper.agilis.jegykassza.user.data.UserEntity;
 import hu.bme.piedpiper.agilis.jegykassza.user.data.UserEntityRepository;
 import hu.bme.piedpiper.agilis.jegykassza.user.service.UserService;
+import hu.bme.piedpiper.agilis.jegykassza.util.ErvenyessegZona;
+import hu.bme.piedpiper.agilis.jegykassza.util.PaymentStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
@@ -18,6 +25,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.sql.Date;
+import java.time.Instant;
+import java.util.Map;
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = JegykasszaApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -64,8 +76,32 @@ class JegykasszaApplicationTests {
         return userCreateRequest;
     }
 
+    private BerletVasarlasRequest createBerletRequest() {
+        BerletVasarlasRequest vasarlasRequest = new BerletVasarlasRequest();
+        vasarlasRequest.setErvenyessegKezdete(Instant.now());
+        vasarlasRequest.setErvenyessegZona(ErvenyessegZona.ORSZAGOS);
+        return vasarlasRequest;
+    }
+
+
+    private JegyVasarlasRequest createJegyRequest() {
+        JegyVasarlasRequest vasarlasRequest = new JegyVasarlasRequest();
+        vasarlasRequest.setErvenyessegKezdete(Instant.now());
+        vasarlasRequest.setErvenyessegZona(ErvenyessegZona.ORSZAGOS);
+        return vasarlasRequest;
+    }
+
+    private CreditCardPaymentRequest createCreditCardRequest(UUID productId) {
+        CreditCardPaymentRequest creditCardPaymentRequest = new CreditCardPaymentRequest();
+        creditCardPaymentRequest.setCcv("888");
+        creditCardPaymentRequest.setCreditCardExpiryDate(Date.from(Instant.now()));
+        creditCardPaymentRequest.setCreditCardNumber("4716035106731071");
+        creditCardPaymentRequest.setProductId(productId);
+        return creditCardPaymentRequest;
+    }
+
     @Test
-    public void testCreateUser() {
+    void testCreateUser() {
         Assert.assertEquals(0, userEntityRepository.count());
         UserEntity entity = userService.registerUser(createUserRequest());
         Assert.assertEquals(1, userEntityRepository.count());
@@ -73,7 +109,52 @@ class JegykasszaApplicationTests {
     }
 
     @Test
-    void contextLoads() {
+    void testReadAllAvailableBerlet() {
+        Map<ErvenyessegZona, Integer> berletek = berletService.getAllBerlet();
+        Assert.assertFalse(berletek.isEmpty());
+        Assert.assertTrue(berletek.containsKey(ErvenyessegZona.BUDAPEST));
+        Assert.assertEquals(1000, berletek.get(ErvenyessegZona.BUDAPEST).intValue());
+
+    }
+
+    @Test
+    void testReadAllAvailableJegy() {
+        Map<ErvenyessegZona, Integer> berletek = jegyService.getAllJegy();
+        Assert.assertFalse(berletek.isEmpty());
+        Assert.assertTrue(berletek.containsKey(ErvenyessegZona.BUDAPEST));
+        Assert.assertEquals(200, berletek.get(ErvenyessegZona.BUDAPEST).intValue());
+    }
+
+    @Test
+    void testBuyBerlet() {
+        UserEntity user = userService.registerUser(createUserRequest());
+        Assert.assertEquals(0, berletEntityRepository.count());
+        BerletEntity berletEntity = berletService.berletVasarlas(createBerletRequest(), user.getId());
+        Assert.assertEquals(1, berletEntityRepository.count());
+        Assert.assertTrue(berletEntityRepository.findById(berletEntity.getId()).isPresent());
+    }
+
+    @Test
+    void testBuyJegy() {
+        UserEntity user = userService.registerUser(createUserRequest());
+        Assert.assertEquals(0, jegyEntityRepository.count());
+        JegyEntity jegyEntity = jegyService.jegyVasarlas(createJegyRequest(), user.getId());
+        Assert.assertEquals(1, jegyEntityRepository.count());
+        Assert.assertTrue(jegyEntityRepository.findById(jegyEntity.getId()).isPresent());
+    }
+
+    @Test
+    void testFizetesByCard() {
+        UserEntity user = userService.registerUser(createUserRequest());
+        Assert.assertEquals(0, jegyEntityRepository.count());
+        JegyEntity jegyEntity = jegyService.jegyVasarlas(createJegyRequest(), user.getId());
+        Assert.assertEquals(1, jegyEntityRepository.count());
+        Assert.assertTrue(jegyEntityRepository.findById(jegyEntity.getId()).isPresent());
+        Assert.assertEquals(PaymentStatus.PENDING, jegyEntity.getPaymentStatus());
+        Assert.assertEquals(0, paymentEntityRepository.count());
+        paymentService.payByCard(createCreditCardRequest(jegyEntity.getId()));
+        Assert.assertEquals(1, paymentEntityRepository.count());
+        Assert.assertEquals(PaymentStatus.SUCCESSFUL, jegyEntity.getPaymentStatus());
     }
 
 }

@@ -40,18 +40,19 @@ public class PaymentService {
         payment.setPaymentType(PaymentType.CREDIT_CARD);
         payment.setProductId(creditCardPaymentRequest.getProductId());
         payment.setUserId(productById.getTulajdonos().getId().toString());
+        updateProductStatus(creditCardPaymentRequest.getProductId(), payment.getPaymentStatus());
         return paymentEntityRepository.save(payment);
     }
 
-
     public PaymentEntity payByPaypal(PaypalPaymentRequest paypalPaymentRequest) {
-        AbstractProduct productById = findProductById(paypalPaymentRequest.getProductId());
+        findProductById(paypalPaymentRequest.getProductId());
         PaymentEntity payment = new PaymentEntity();
         payment.setPaymentStatus(PaymentStatus.SUCCESSFUL);
         payment.setPaymentTime(Instant.now());
         payment.setPaymentType(PaymentType.PAYPAL);
         payment.setProductId(paypalPaymentRequest.getProductId());
         payment.setUserId(paypalPaymentRequest.getPaypalUsername());
+        updateProductStatus(paypalPaymentRequest.getProductId(), payment.getPaymentStatus());
         return paymentEntityRepository.save(payment);
     }
 
@@ -64,6 +65,7 @@ public class PaymentService {
         payment.setPaymentType(PaymentType.CASH);
         payment.setProductId(cashPaymentRequest.getProductId());
         payment.setUserId(productById.getTulajdonos().getId().toString());
+        updateProductStatus(cashPaymentRequest.getProductId(), payment.getPaymentStatus());
         return paymentEntityRepository.save(payment);
     }
 
@@ -82,4 +84,19 @@ public class PaymentService {
             throw new EntityNotFoundException("Nincs fizetésre váró termék az adott azonosítóval.");
         }
     }
+
+    private void updateProductStatus(UUID productId, PaymentStatus paymentStatus) {
+        Optional<BerletEntity> berletEntity = berletEntityRepository.findById(productId);
+        Optional<JegyEntity> jegyEntity = jegyEntityRepository.findById(productId);
+        if (berletEntity.isPresent() && berletEntity.get().getPaymentStatus() != PaymentStatus.SUCCESSFUL) {
+            berletEntity.get().setPaymentStatus(paymentStatus);
+            berletEntityRepository.save(berletEntity.get());
+        } else if (jegyEntity.isPresent() && jegyEntity.get().getPaymentStatus() != PaymentStatus.SUCCESSFUL) {
+            jegyEntity.get().setPaymentStatus(paymentStatus);
+            jegyEntityRepository.save(jegyEntity.get());
+        } else {
+            throw new EntityNotFoundException("Nincs fizetésre váró termék az adott azonosítóval.");
+        }
+    }
+
 }

@@ -3,10 +3,7 @@ package hu.bme.piedpiper.agilis.jegykassza.util;
 import hu.bme.piedpiper.agilis.jegykassza.user.data.UserEntity;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.util.UUID;
 
 @MappedSuperclass
@@ -19,5 +16,8 @@ public class AbstractProduct {
 
     @ManyToOne(targetEntity = UserEntity.class)
     private UserEntity tulajdonos;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
 }
